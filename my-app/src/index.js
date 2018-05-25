@@ -17,7 +17,8 @@ function Square(props) {
     constructor(props) {
       super(props);
       this.state = {
-        squares: Array(9).fill(null)
+        squares: Array(9).fill(null),
+        xIsNext: true
       };
     }
 
@@ -27,8 +28,14 @@ function Square(props) {
       // 1. Easier to undo/redo and time travel
       // 2. Determining when to re-render in React (pure components)
       const squares = this.state.squares.slice();
-      squares[i] = 'X';
-      this.setState({squares: squares});
+
+      // Change square character
+      squares[i] = this.state.xIsNext ? 'X' : 'O';
+
+      this.setState({
+        squares: squares,
+        xIsNext: !this.state.xIsNext
+      });
     }
 
     renderSquare(i) {
@@ -41,7 +48,8 @@ function Square(props) {
     }
   
     render() {
-      const status = 'Next player: X';
+      // Change the board status label
+      const status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
   
       return (
         <div>
