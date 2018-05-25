@@ -3,17 +3,10 @@ import ReactDOM from 'react-dom';
 import './index.css';
 
 class Square extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        value: null
-      };
-    }
-
     render() {
       return (
-        <button className="square" onClick={() => this.setState({value: 'X'})}>
-          {this.state.value}
+        <button className="square" onClick={() => this.props.onClick()}>
+          {this.props.value}
         </button>
       );
     }
@@ -27,8 +20,23 @@ class Square extends React.Component {
       };
     }
 
+    handleClick(i) {
+      // Call slice to copy the squares array instead of mutating the existing array
+      // Added benefits to immutability:
+      // 1. Easier to undo/redo and time travel
+      // 2. Determining when to re-render in React (pure components)
+      const squares = this.state.squares.slice();
+      squares[i] = 'X';
+      this.setState({squares: squares});
+    }
+
     renderSquare(i) {
-      return <Square value={i}/>;       // Pass a value to the Square
+      return (
+        <Square 
+          value={this.state.squares[i]}   // Pass a value to the Square
+          onClick={() => this.handleClick(i)}
+        />
+      );
     }
   
     render() {
