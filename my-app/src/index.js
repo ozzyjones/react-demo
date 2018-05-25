@@ -29,6 +29,12 @@ function Square(props) {
       // 2. Determining when to re-render in React (pure components)
       const squares = this.state.squares.slice();
 
+      // Return early if someone has already won the game 
+      // or if the square is already filled
+      if (calculateWinner(squares) || squares[i]) {
+        return;
+      }
+
       // Change square character
       squares[i] = this.state.xIsNext ? 'X' : 'O';
 
@@ -49,7 +55,13 @@ function Square(props) {
   
     render() {
       // Change the board status label
-      const status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+      const winner = calculateWinner(this.state.squares);
+      let status;
+      if (winner) {
+        status = 'Winner: ' + winner;
+      } else {
+        status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+      }
   
       return (
         <div>
@@ -90,6 +102,27 @@ function Square(props) {
     }
   }
   
+  // Helper to calculate the winner of the game
+  function calculateWinner(squares) {
+    const lines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+        return squares[a];
+      }
+    }
+    return null;
+  }
+
   // ========================================
   
   ReactDOM.render(
