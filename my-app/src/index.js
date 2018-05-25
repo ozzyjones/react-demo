@@ -2,15 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-class Square extends React.Component {
-    render() {
-      return (
-        <button className="square" onClick={() => this.props.onClick()}>
-          {this.props.value}
-        </button>
-      );
-    }
-  }
+// React supports a simpler syntax call "functional components" for component types 
+// that only consist of a "render" method.
+// Note: you'll need to change "this.props" to "props" both times it appears.
+function Square(props) {
+  return (
+    <button className="square" onClick={props.onClick}>
+      {props.value}
+    </button>
+  );
+}
   
   class Board extends React.Component {
     constructor(props) {
