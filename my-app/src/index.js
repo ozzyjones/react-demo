@@ -89,9 +89,24 @@ function Square(props) {
       // Board History
       const history = this.state.history;
       const current = history[history.length - 1];
+      const winner = calculateWinner(current.squares);
+
+      // React elements are first-class JS objects and we can store them 
+      // or pass them around.  To render multiple items in React, we pass 
+      // an array of React elemnts.  The most common way to build that 
+      // array is to map over your array of data.
+      const moves = history.map((step, move) => {
+        const desc = move ? 
+          'Go to move #' + move :
+          'Go to game start';
+          return (
+            <li>
+              <button onClick={() => this.jumpTo(move)}>{desc}</button>
+            </li>
+          );
+      })
 
       // Change the board status label
-      const winner = calculateWinner(current.squares);
       let status;
       if (winner) {
         status = 'Winner: ' + winner;
@@ -109,7 +124,7 @@ function Square(props) {
           </div>
           <div className="game-info">
             <div>{status}</div>
-            <ol>{/* TODO */}</ol>
+            <ol>{moves}</ol>
           </div>
         </div>
       );
