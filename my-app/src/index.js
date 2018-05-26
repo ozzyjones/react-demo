@@ -14,58 +14,19 @@ function Square(props) {
 }
   
   class Board extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        squares: Array(9).fill(null),
-        xIsNext: true
-      };
-    }
-
-    handleClick(i) {
-      // Call slice to copy the squares array instead of mutating the existing array
-      // Added benefits to immutability:
-      // 1. Easier to undo/redo and time travel
-      // 2. Determining when to re-render in React (pure components)
-      const squares = this.state.squares.slice();
-
-      // Return early if someone has already won the game 
-      // or if the square is already filled
-      if (calculateWinner(squares) || squares[i]) {
-        return;
-      }
-
-      // Change square character
-      squares[i] = this.state.xIsNext ? 'X' : 'O';
-
-      this.setState({
-        squares: squares,
-        xIsNext: !this.state.xIsNext
-      });
-    }
 
     renderSquare(i) {
       return (
         <Square 
-          value={this.state.squares[i]}   // Pass a value to the Square
-          onClick={() => this.handleClick(i)}
+          value={this.props.squares[i]}   // Pass a value to the Square
+          onClick={() => this.props.onClick(i)}
         />
       );
     }
   
-    render() {
-      // Change the board status label
-      const winner = calculateWinner(this.state.squares);
-      let status;
-      if (winner) {
-        status = 'Winner: ' + winner;
-      } else {
-        status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
-      }
-  
+    render() {  
       return (
         <div>
-          <div className="status">{status}</div>
           <div className="board-row">
             {this.renderSquare(0)}
             {this.renderSquare(1)}
@@ -87,14 +48,67 @@ function Square(props) {
   }
   
   class Game extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {
+        history: [{
+          squares: Array(9).fill(null)
+        }],
+        xIsNext: true
+      };
+    }
+
+    handleClick(i) {
+      const history = this.state.history;
+      const current = history[history.length - 1];
+
+      // Call slice to copy the squares array instead of mutating the existing array
+      // Added benefits to immutability:
+      // 1. Easier to undo/redo and time travel
+      // 2. Determining when to re-render in React (pure components)
+      const squares = current.squares.slice();
+
+      // Return early if someone has already won the game 
+      // or if the square is already filled
+      if (calculateWinner(squares) || squares[i]) {
+        return;
+      }
+
+      // Change square character
+      squares[i] = this.state.xIsNext ? 'X' : 'O';
+
+      this.setState({
+        history: history.concat([{
+          squares: squares
+        }]),
+        xIsNext: !this.state.xIsNext
+      });
+    }
+
     render() {
+      // Board History
+      const history = this.state.history;
+      const current = history[history.length - 1];
+
+      // Change the board status label
+      const winner = calculateWinner(current.squares);
+      let status;
+      if (winner) {
+        status = 'Winner: ' + winner;
+      } else {
+        status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+      }
+
       return (
         <div className="game">
           <div className="game-board">
-            <Board />
+            <Board 
+              squares={current.squares}
+              onClick={(i) => this.handleClick(i)}
+            />
           </div>
           <div className="game-info">
-            <div>{/* status */}</div>
+            <div>{status}</div>
             <ol>{/* TODO */}</ol>
           </div>
         </div>
