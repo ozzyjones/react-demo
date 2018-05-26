@@ -100,7 +100,12 @@ function Square(props) {
           'Go to move #' + move :
           'Go to game start';
           return (
-            <li>
+            // React asks you to specify a 'key' property on each element 
+            // in a list to differentiate each component from its siblings.
+            // 'key' is a special property that's reserved by React
+            // It's strongly recommended that you assign proper keys 
+            // whenever you build dynamic lists.
+            <li key={move}>
               <button onClick={() => this.jumpTo(move)}>{desc}</button>
             </li>
           );
